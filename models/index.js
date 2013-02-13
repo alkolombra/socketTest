@@ -69,4 +69,39 @@ function extendStaticMethods(modelName, registerArr){
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
 
+  // Users
+	var usersSchema = new mongoose.Schema({
+		fbUid:{type:Number, required: true, index:true},
+		name: {type: String, required: true},
+		firstName: {type: String, required: true},
+		lastName: {type: String, required: true},
+		email: {type: String, required: true},
+    gender: {type: String, required: false}
+	});
+
+	usersSchema.statics = extendStaticMethods('Users', ['list', 'upd', 'get']);
+	exports.Users = db.model('Users', usersSchema);
+
+  // Settings
+	var settingsSchema = new mongoose.Schema({
+		host:String,
+		facebook: {
+			permissions: {},
+			appId: { type:Number, default:0 }
+		}
+	});
+
+	settingsSchema.statics = extendStaticMethods('Settings', ['list', 'add']);
+	exports.Settings = db.model('Settings', settingsSchema);
+
+  // Banners
+  var bannersSchema = new mongoose.Schema({
+    code:String,
+    media: {},
+    enabled:{type:Number, default:0}
+  });
+
+  bannersSchema.statics = extendStaticMethods('Banners', ['list', 'add']);
+  exports.Banners = db.model('Banners', bannersSchema);
+
 });

@@ -1,3 +1,46 @@
-#text(ng-cotroller="MainCtrl")
-	input(type="text", style="width:500px;", onkeyup="angular.element(this).scope().updateText(this.value)")	
-	button(ng-click="send()") SEND
+#onlineUsersListWrapper(ng-controller="ChatCtrl")
+	.onlineUsersHeader Online Users	
+	#onlineUsersList
+		.onlineUserImage(ng-repeat="user in socket.users", ng-click="inviteToChat(user)")
+			img(ng-src="{{user.picture}}", width="50", height="50", alt="", border="0")
+			.onlineUserName {{user.username}}
+	#dialogWaitingChatConfirm.fade(ui-modal, data-backdrop="static", data-keyboard="false", ng-model="dialogs.chat.waitingConfirmation.shown")
+		img(src="/images/ajax-loader.gif")
+		p
+			span Waiting for {{ chat.invitedUser.name }} to reply.		
+		button.btn.btn-primary(ng-click="closeWaitingConfirmation()") Cancel		
+	#dialogChatConfirm.fade(ui-modal, data-backdrop="static", data-keyboard="false", ng-model="dialogs.chat.confirmation.shown")	
+		img(src="/images/ajax-loader.gif")
+		p	
+			span {{ chat.invitingUser.name }} inviting you to chat.
+		button.btn.btn-primary(ng-click="chatConfirmation(true)") Yes
+		span   
+		button.btn.btn-primary(ng-click="chatConfirmation(false)") No
+	#dialogMessage.fade(ui-modal, ng-model="dialogs.message.shown")
+		br
+		p
+			span {{ dialogs.message.text }}
+		button.btn.btn-primary(ng-click="dialogs.message.shown=false") Close
+#facebook(ng-controller="FacebookCtrl")
+	//- input(type="text", style="width:500px;", onkeyup="angular.element(this).scope().updateText(this.value)")	
+	//- button(ng-click="send()") SEND
+	img#profilePicture(ng-src="{{user.profilePicture}}", width="150", height="150", border="1", alt="Profile Picture")
+	.userName {{user.facebook.name}}
+	button#login(ng-click="handleFbLogin(collectUser)") Login
+span Log Filter 
+	input(type="text", ng-model="logQuery")
+#socketLog
+	.log(ng-repeat="log in socket.log | filter:logQuery")
+		span {{ log }}
+#bannersOnline
+	table(border="0", cellspacing="1")
+		thead
+			tr(ng-repeat="banner in socket.banners | break:1")
+				td 
+				td(ng-repeat="(key,media) in banner", style="background-color:#343434;color:#fff;font-weight:bold;")
+					{{ key }}
+		tbody(ng-repeat="(key,banner) in socket.banners")
+			tr		
+				td {{key}}
+				td(ng-repeat="media in banner") {{ media }}
+

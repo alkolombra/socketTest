@@ -1,15 +1,48 @@
 doctype 5
-html(ng-app="socketTest", ng-controller="GlobalCtrl")
+html#mainLayout(ng-app="socketTest", ng-controller="GlobalCtrl")
 	head
 		title= title
 		link(rel='stylesheet', href='/stylesheets/style.css')
-		script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.min.js")
-		script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular-resource.min.js")
+		//link(rel='stylesheet', href='//code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css')		
+		//script(src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js")
 		script(src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js")
-		script(src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js")
+		script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js")
+		script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-resource.min.js")		
+		//script(src="//angular-ui.github.com/bootstrap/ui-bootstrap-tpls-0.1.0.js")
+		//link(rel='stylesheet', href='//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css')
+		script(src="/javascripts/angular-ui/angular-ui.js")
+		script(src="/javascripts/bootstrap/bootstrap.js")
+		link(rel='stylesheet', href='//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap.no-icons.min.css')
 		script(src="/javascripts/app.js")
 		script(src="/javascripts/controllers.js")
 		script(src="/socket.io/socket.io.js")		
-		//script(type="text/javascript", src="/javascripts/swfobject.js")
+		script(type="text/javascript", src="/javascripts/mm_sharedObject.js")
 	body
+		#fb-root
+		script
+			var init = false;
+			function fbInit(host, appId, cb) {
+				window.fbAsyncInit = function() {
+
+					FB.Event.subscribe('auth.statusChange', function(response) {												
+						if(response.status == 'connected' && cb) {
+							cb();
+						}						
+					});
+					FB.init({
+						appId: appId, // App ID from the App Dashboard
+						channelUrl: '//' + host + '/channel.html', // Channel File for x-domain communication
+						status: true, // check the login status upon init?
+						cookie: true, // set sessions cookies to allow your server to access the session?
+						xfbml: true  // parse XFBML tags on this page?
+					});
+				};
+				(function(d, debug){
+					var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+					if (d.getElementById(id)) {return;}
+					js = d.createElement('script'); js.id = id; js.async = true;
+					js.src = "//connect.facebook.net/en_US/all" + (debug ? "/debug" : "") + ".js";
+					ref.parentNode.insertBefore(js, ref);
+				}(document, /*debug*/ false));
+			}
 		#wapper(ng-view)
